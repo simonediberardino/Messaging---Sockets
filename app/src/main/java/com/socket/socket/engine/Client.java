@@ -1,4 +1,4 @@
-package com.socket.socket;
+package com.socket.socket.engine;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -7,24 +7,28 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.socket.socket.R;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Client extends AppCompatActivity{
-    String SERVER_IP;
-    int SERVER_PORT;
+    private String SERVER_IP;
+    private int SERVER_PORT;
 
     private PrintWriter output;
     private BufferedReader input;
 
-    EditText editTextIP, editTextPort;
-    TextView textViewMessages;
-    EditText editTextMessage;
-    Button buttonInvio;
-    Button buttonConnect;
+    private Socket socket;
+    private EditText editTextIP, editTextPort;
+    private TextView textViewMessages;
+    private EditText editTextMessage;
+    private Button buttonInvio;
+    private Button buttonConnect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,6 @@ public class Client extends AppCompatActivity{
     }
 
     private void connectServer(){
-        Socket socket;
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
             output = new PrintWriter(socket.getOutputStream());
@@ -94,5 +97,23 @@ public class Client extends AppCompatActivity{
             textViewMessages.append(String.format("Client: %s\n", message));
             editTextMessage.setText(new String());
         });
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        try{
+            if(socket != null)
+                socket.close();
+
+            if(output != null)
+                output.close();
+
+            if(input != null)
+                input.close();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.socket.socket;
+package com.socket.socket.engine;
 
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.socket.socket.R;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,17 +24,17 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class Server extends AppCompatActivity{
-    public static String SERVER_IP;
-    public static final int SERVER_PORT = 8080;
+    private static String SERVER_IP;
+    private static final int SERVER_PORT = 8080;
 
     private PrintWriter output;
     private BufferedReader input;
 
-    ServerSocket serverSocket;
-    TextView textViewIP, textViewPort;
-    TextView textViewMessages;
-    EditText editTextMessage;
-    Button buttonInvio;
+    private ServerSocket serverSocket;
+    private TextView textViewIP, textViewPort;
+    private TextView textViewMessages;
+    private EditText editTextMessage;
+    private Button buttonInvio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,5 +124,23 @@ public class Server extends AppCompatActivity{
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         int ipInt = wifiInfo.getIpAddress();
         return InetAddress.getByAddress(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(ipInt).array()).getHostAddress();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        try{
+            if(serverSocket != null)
+                serverSocket.close();
+
+            if(output != null)
+                output.close();
+
+            if(input != null)
+                input.close();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }

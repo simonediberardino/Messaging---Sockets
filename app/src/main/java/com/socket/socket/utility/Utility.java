@@ -1,4 +1,4 @@
-package com.socket.socket;
+package com.socket.socket.utility;
 
 import android.content.Intent;
 

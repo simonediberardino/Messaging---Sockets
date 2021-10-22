@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "263018584359",
+    "project_id": "socket-chat-aab65",
+    "storage_bucket": "socket-chat-aab65.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263018584359:android:44af7e9455fe95908d7102",
+        "android_client_info": {
+          "package_name": "com.socket.socket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "263018584359-4umqnof220t4gdnfv9g4h828prbt89j4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCf3iZheY2dnyNVrlCGbVucFBiFssxSQxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "263018584359-4umqnof220t4gdnfv9g4h828prbt89j4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
