@@ -1,0 +1,48 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<RelativeLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    xmlns:tools = "http://schemas.android.com/tools"
+    android:layout_width = "match_parent"
+    android:layout_height = "match_parent"
+    android:layout_margin = "16dp"
+    tools:context = ".MainActivity">
+    <TextView
+        android:id = "@+id/server_out_ip"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:textAppearance = "@style/Base.TextAppearance.AppCompat.Medium" />
+    <TextView
+        android:id = "@+id/server_out_port"
+        android:layout_width = "wrap_content"
+        android:layout_height = "wrap_content"
+        android:layout_below = "@+id/server_out_ip"
+        android:textAppearance = "@style/Base.TextAppearance.AppCompat.Medium" />
+    <TextView
+        android:id = "@+id/server_status"
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:layout_below = "@+id/server_out_port"
+        android:textAppearance = "@style/Base.TextAppearance.AppCompat.Medium" />
+    <TextView
+        android:id = "@+id/server_out_message"
+        android:layout_width = "match_parent"
+        android:layout_height = "wrap_content"
+        android:layout_above = "@+id/server_in_message"
+        android:layout_below = "@+id/server_status"
+        android:inputType = "textMultiLine"
+        android:textAppearance = "@style/Base.TextAppearance.AppCompat.Medium" />
+
+    <EditText
+        android:id="@+id/server_in_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/server_btn_send"
+        android:hint="@string/entermessage"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/server_btn_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/send" />
+</RelativeLayout>

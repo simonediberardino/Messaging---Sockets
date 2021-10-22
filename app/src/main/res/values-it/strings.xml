@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Socket</string>
+    <string name="startserver">Avvia server</string>
+    <string name="joinserver">Partecipa a un server</string>
+    <string name="port">Porta</string>
+    <string name="ipaddress">Indirizzo IP</string>
+    <string name="connected">Connesso</string>
+    <string name="notconnected">Non connesso</string>
+    <string name="entermessage">Inserisci messaggio</string>
+    <string name="send">Invia</string>
+    <string name="connecttoserver">Connettiti al server</string>
+</resources>

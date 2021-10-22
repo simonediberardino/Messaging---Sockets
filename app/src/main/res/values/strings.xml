@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Socket</string>
+    <string name="startserver">Start server</string>
+    <string name="joinserver">Join server</string>
+    <string name="port">Port</string>
+    <string name="ipaddress">IP Address</string>
+    <string name="connected">Connected</string>
+    <string name="notconnected">Not connected</string>
+    <string name="entermessage">Enter message</string>
+    <string name="send">Send</string>
+    <string name="connecttoserver">Connect to server</string>
+</resources>
