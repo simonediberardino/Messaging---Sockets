@@ -24,8 +24,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class Server extends AppCompatActivity{
-    private static String SERVER_IP;
-    private static final int SERVER_PORT = 8080;
+    private String SERVER_IP;
+    private final int SERVER_PORT = 8080;
 
     private PrintWriter output;
     private BufferedReader input;
