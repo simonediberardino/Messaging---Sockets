@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/input_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="800px"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/input_textInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/input_closeDialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_close" />
+
+            <TextView
+                android:id="@+id/input_titleDialog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/carter_one"
+                android:shadowColor="#000"
+                android:shadowDx="2"
+                android:shadowDy="5"
+                android:shadowRadius="1.5"
+                android:text="@string/joinserver"
+                android:textColor="@color/green"
+                android:textSize="55px"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/input_okDialog"
+                android:layout_width="280px"
+                android:layout_height="120px"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:alpha="0.85"
+                android:background="@drawable/green_button"
+                android:button="@android:color/transparent"
+                android:fontFamily="@font/carter_one"
+                android:gravity="center"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:shadowColor="@color/black"
+                android:shadowDx="2"
+                android:shadowDy="5"
+                android:shadowRadius="1.5"
+                android:text="@string/connect"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="35px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/input_portDialog" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_addressDialog"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:hint="@string/ipaddress"
+                android:inputType="textCapSentences"
+                android:textAllCaps="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/input_addressIcon"
+                app:layout_constraintTop_toBottomOf="@+id/input_titleDialog" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_portDialog"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:hint="@string/port"
+                android:inputType="textCapSentences"
+                android:textAllCaps="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/input_addressIcon"
+                app:layout_constraintTop_toBottomOf="@+id/input_addressDialog" />
+
+            <ImageView
+                android:id="@+id/input_addressIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/input_addressDialog"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/input_addressDialog"
+                app:srcCompat="@drawable/ic_baseline_email_24" />
+
+            <ImageView
+                android:id="@+id/input_portIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/input_portDialog"
+                app:layout_constraintStart_toStartOf="@+id/input_addressIcon"
+                app:layout_constraintTop_toTopOf="@+id/input_portDialog"
+                app:srcCompat="@drawable/ic_baseline_search_24" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

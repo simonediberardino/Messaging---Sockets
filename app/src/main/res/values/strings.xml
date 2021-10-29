@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Socket</string>
+    <string name="app_name">Socket chat</string>
     <string name="startserver">Start server</string>
     <string name="joinserver">Join server</string>
     <string name="port">Port</string>
@@ -9,4 +9,19 @@
     <string name="entermessage">Enter message</string>
     <string name="send">Send</string>
     <string name="connecttoserver">Connect to server</string>
+    <string name="close">Close app</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirmleave">Closing app?</string>
+    <string name="inserttext">Insert text…</string>
+    <string name="confirm">Confirm</string>
+    <string name="connect">Connect</string>
+    <string name="info">Socket info</string>
+    <string name="client">Client</string>
+    <string name="server">Server</string>
+    <string name="connectsuccessfully">Connected successfully!</string>
+    <string name="invalidaddress">Invalid IP Address.</string>
+    <string name="invalidportnumber">Invalid port number.</string>
+    <string name="connectionerror">Couldn\'t connect to the server.</string>
+
 </resources>

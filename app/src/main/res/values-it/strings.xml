@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Socket</string>
+    <string name="app_name">Socket chat</string>
     <string name="startserver">Avvia server</string>
     <string name="joinserver">Partecipa a un server</string>
     <string name="port">Porta</string>
@@ -10,4 +10,18 @@
     <string name="entermessage">Inserisci messaggio</string>
     <string name="send">Invia</string>
     <string name="connecttoserver">Connettiti al server</string>
+    <string name="close">Chiudi app</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Annulla</string>
+    <string name="confirmleave">Chiudere l\'app?</string>
+    <string name="inserttext">Inserisci il testo…</string>
+    <string name="confirm">Conferma</string>
+    <string name="connect">Connettiti</string>
+    <string name="info">Info del socket</string>
+    <string name="client">Client</string>
+    <string name="server">Server</string>
+    <string name="connectsuccessfully">Connesso con successo!</string>
+    <string name="invalidaddress">Indirizzo IP non valido.</string>
+    <string name="invalidportnumber">Numero di porta non valido.</string>
+    <string name="connectionerror">Non è stato possibile connettersi al server.</string>
 </resources>

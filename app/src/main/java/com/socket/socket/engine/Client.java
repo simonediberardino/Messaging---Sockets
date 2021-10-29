@@ -1,15 +1,24 @@
 package com.socket.socket.engine;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.socket.socket.R;
+import com.socket.socket.utility.Utility;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -20,44 +29,72 @@ public class Client extends AppCompatActivity{
     private String SERVER_IP;
     private int SERVER_PORT;
 
-    private PrintWriter output;
-    private BufferedReader input;
+    private DataOutputStream output;
+    private DataInputStream input;
 
     private Socket socket;
-    private EditText editTextIP, editTextPort;
+    private TextView textViewIP, textViewPort;
     private TextView textViewMessages;
     private EditText editTextMessage;
-    private Button buttonInvio;
-    private Button buttonConnect;
+    private ImageButton buttonInvio;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.main_client);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        this.setContentView(R.layout.main_server);
+
+        Utility.enableTopBar(this);
+        Utility.ridimensionamento(this, findViewById(R.id.parent));
+
+        Bundle extras = getIntent().getExtras();
+
+        SERVER_IP = extras.getString("address");
+        SERVER_PORT = extras.getInt("port");
 
         initializate();
+        new Thread(this::connectServer).start();
+
+        final int timeout = 2000;
+        new Handler().postDelayed(() -> {
+            if(socket == null){
+                Utility.oneLineDialog(this,
+                        getString(R.string.connectionerror),
+                        getString(R.string.ok),
+                        getString(R.string.cancel),
+
+                        this::onBackPressed,
+                        this::onBackPressed,
+                        this::onBackPressed);
+            }
+        }, timeout);
     }
 
     private void initializate(){
-        editTextIP = findViewById(R.id.etIP);
-        editTextPort = findViewById(R.id.etPort);
+        textViewIP = findViewById(R.id.server_info_address);
+        textViewPort = findViewById(R.id.server_info_port);
         textViewMessages = findViewById(R.id.server_out_message);
         editTextMessage = findViewById(R.id.server_in_message);
         buttonInvio = findViewById(R.id.server_btn_send);
-        buttonConnect = findViewById(R.id.btnConnect);
 
-        buttonConnect.setOnClickListener(v -> {
-            textViewMessages.setText(new String());
-            SERVER_IP = editTextIP.getText().toString().trim();
-            SERVER_PORT = Integer.parseInt(editTextPort.getText().toString().trim());
-
-            new Thread(this::connectServer).start();
-        });
+        textViewIP.setText(String.format("%s: %s", getString(R.string.ipaddress), SERVER_IP));
+        textViewPort.setText(String.format("%s: %s", getString(R.string.port), SERVER_PORT));
 
         buttonInvio.setOnClickListener(v -> {
             String message = editTextMessage.getText().toString().trim();
             if (!message.isEmpty()) {
-                new Thread(() -> sendMessage(message)).start();
+                new Thread(() -> {
+                    try{
+                        sendMessage(message);
+                    }
+                    catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }).start();
             }
         });
     }
@@ -65,11 +102,16 @@ public class Client extends AppCompatActivity{
     private void connectServer(){
         try {
             socket = new Socket(SERVER_IP, SERVER_PORT);
-            output = new PrintWriter(socket.getOutputStream());
-            input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            runOnUiThread(() -> textViewMessages.setText(String.format("%s\n", getString(R.string.connected))));
+            output = new DataOutputStream(socket.getOutputStream());
+            input = new DataInputStream(socket.getInputStream());
 
-            new Thread(this::messageListener);
+            runOnUiThread(() -> {
+                Utility.oneLineDialog(this, getString(R.string.connectsuccessfully), null);
+                textViewIP.setText(String.format("%s: %s", getString(R.string.ipaddress), SERVER_IP));
+                textViewPort.setText(String.format("%s: %s", getString(R.string.port), SERVER_PORT));
+            });
+
+            new Thread(this::messageListener).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,9 +120,9 @@ public class Client extends AppCompatActivity{
     private void messageListener(){
         while (true) {
             try {
-                final String message = input.readLine();
+                final String message = input.readUTF();
                 if (message != null) {
-                    runOnUiThread(() -> textViewMessages.append(String.format("Server: %s\n", message)));
+                    runOnUiThread(() -> textViewMessages.append(String.format("%s: %s\n", getString(R.string.server), message)));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -88,13 +130,12 @@ public class Client extends AppCompatActivity{
         }
     }
 
-    private void sendMessage(String message){
-        output.write(message);
+    private void sendMessage(String message) throws IOException{
+        output.writeUTF(message);
         output.flush();
-        output.close();
 
         runOnUiThread(() -> {
-            textViewMessages.append(String.format("Client: %s\n", message));
+            textViewMessages.append(String.format("%s: %s\n", getString(R.string.client), message));
             editTextMessage.setText(new String());
         });
     }
@@ -102,6 +143,7 @@ public class Client extends AppCompatActivity{
     @Override
     protected void onStop(){
         super.onStop();
+
         try{
             if(socket != null)
                 socket.close();

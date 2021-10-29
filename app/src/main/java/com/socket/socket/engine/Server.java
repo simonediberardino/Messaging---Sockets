@@ -2,17 +2,25 @@ package com.socket.socket.engine;
 
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.socket.socket.R;
+import com.socket.socket.utility.Utility;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -27,26 +35,34 @@ public class Server extends AppCompatActivity{
     private String SERVER_IP;
     private final int SERVER_PORT = 8080;
 
-    private PrintWriter output;
-    private BufferedReader input;
+    private DataOutputStream output;
+    private DataInputStream input;
 
     private ServerSocket serverSocket;
     private TextView textViewIP, textViewPort;
     private TextView textViewMessages;
     private EditText editTextMessage;
-    private Button buttonInvio;
+    private ImageButton buttonInvio;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.main_server);
-        
+
+        Utility.enableTopBar(this);
+        Utility.ridimensionamento(this, findViewById(R.id.parent));
+
         initializate();
     }
 
     private void initializate(){
-        textViewIP = findViewById(R.id.server_out_ip);
-        textViewPort = findViewById(R.id.server_out_port);
+        textViewIP = findViewById(R.id.server_info_address);
+        textViewPort = findViewById(R.id.server_info_port);
         textViewMessages = findViewById(R.id.server_out_message);
         editTextMessage = findViewById(R.id.server_in_message);
         buttonInvio = findViewById(R.id.server_btn_send);
@@ -57,10 +73,19 @@ public class Server extends AppCompatActivity{
             e.printStackTrace();
         }
 
+        editTextMessage.setEnabled(false);
+
         buttonInvio.setOnClickListener(v -> {
             String message = editTextMessage.getText().toString().trim();
             if (!message.isEmpty()) {
-                new Thread(() -> sendMessage(message)).start();
+                new Thread(() -> {
+                    try{
+                        sendMessage(message);
+                    }
+                    catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }).start();
             }
         });
 
@@ -73,17 +98,19 @@ public class Server extends AppCompatActivity{
             serverSocket = new ServerSocket(SERVER_PORT);
 
             runOnUiThread(() -> {
-                textViewMessages.setText(getString(R.string.notconnected));
                 textViewIP.setText(String.format("%s: %s", getString(R.string.ipaddress), SERVER_IP));
                 textViewPort.setText(String.format("%s: %s", getString(R.string.port), SERVER_PORT));
             });
 
             try {
                 socket = serverSocket.accept();
-                output = new PrintWriter(socket.getOutputStream());
-                input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                output = new DataOutputStream(socket.getOutputStream());
+                input = new DataInputStream(socket.getInputStream());
 
-                runOnUiThread(() -> textViewMessages.setText(String.format("%s\n", getString(R.string.connected))));
+                runOnUiThread(() -> {
+                    Utility.oneLineDialog(this, getString(R.string.connectsuccessfully), null);
+                    editTextMessage.setEnabled(true);
+                });
 
                 new Thread(this::messageListener).start();
             } catch (IOException e) {
@@ -97,9 +124,9 @@ public class Server extends AppCompatActivity{
     private void messageListener(){
         while (true) {
             try {
-                final String message = input.readLine();
+                final String message = input.readUTF();
                 if (message != null) {
-                    runOnUiThread(() -> textViewMessages.append(String.format("Client: %s\n", message)));
+                    runOnUiThread(() -> textViewMessages.append(String.format("%s: %s\n", getString(R.string.client), message)));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -107,13 +134,12 @@ public class Server extends AppCompatActivity{
         }
     }
 
-    private void sendMessage(String message){
-        output.write(message);
+    private void sendMessage(String message) throws IOException{
+        output.writeUTF(message);
         output.flush();
-        output.close();
 
         runOnUiThread(() -> {
-            textViewMessages.append(String.format("Server: %s\n", message));
+            textViewMessages.append(String.format("%s: %s\n", getString(R.string.server), message));
             editTextMessage.setText(new String());
         });
     }
@@ -129,6 +155,7 @@ public class Server extends AppCompatActivity{
     @Override
     protected void onStop(){
         super.onStop();
+
         try{
             if(serverSocket != null)
                 serverSocket.close();

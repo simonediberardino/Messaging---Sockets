@@ -1,29 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rL"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:alpha="0.99"
+    android:orientation="vertical"
     tools:context=".home.MainActivity">
 
-    <Button
-        android:id="@+id/main_startserver"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/startserver"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.461" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background">
 
-    <Button
-        android:id="@+id/main_joinserver"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/joinserver"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_startserver" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+        <RadioButton
+            android:id="@+id/main_startserver"
+            android:layout_width="400px"
+            android:layout_height="120px"
+            android:alpha="0.85"
+            android:background="@drawable/yellow_btn_icon"
+            android:button="@android:color/transparent"
+
+            android:drawableRight="@drawable/ic_baseline_add_circle_outline_24"
+            android:fontFamily="@font/carter_one"
+            android:gravity="center|left"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="2"
+            android:shadowDy="5"
+            android:shadowRadius="1.5"
+            android:text="@string/startserver"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="35px"
+            app:layout_constraintBottom_toTopOf="@+id/footer"
+            app:layout_constraintEnd_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <RadioButton
+            android:id="@+id/main_closeapp"
+            android:layout_width="400px"
+            android:layout_height="120px"
+            android:layout_marginTop="10dp"
+            android:alpha="0.85"
+            android:background="@drawable/red_button_icon"
+            android:button="@android:color/transparent"
+            android:drawableRight="@drawable/ic_baseline_exit_to_app_24"
+            android:fontFamily="@font/carter_one"
+            android:gravity="center|left"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="2"
+            android:shadowDy="5"
+            android:shadowRadius="1.5"
+            android:text="@string/close"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="35px"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/main_joinserver" />
+
+        <RadioButton
+            android:id="@+id/main_joinserver"
+            android:layout_width="400px"
+            android:layout_height="120px"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:alpha="0.85"
+            android:background="@drawable/yellow_btn_icon"
+            android:button="@android:color/transparent"
+            android:drawableRight="@drawable/ic_baseline_supervisor_account_24"
+            android:fontFamily="@font/carter_one"
+            android:gravity="center|left"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:shadowColor="@color/black"
+            android:shadowDx="2"
+            android:shadowDy="5"
+            android:shadowRadius="1.5"
+            android:text="@string/joinserver"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="35px"
+            app:layout_constraintStart_toEndOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/main_startserver" />
+
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="150px"
+            android:background="@drawable/topbar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>
