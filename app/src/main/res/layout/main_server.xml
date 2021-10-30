@@ -90,7 +90,7 @@
             app:layout_constraintVertical_bias="0.242">
 
             <ScrollView
-                android:id="@+id/scrollView"
+                android:id="@+id/server_scrollView"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
                 android:layout_marginStart="24dp"

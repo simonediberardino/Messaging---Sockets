@@ -3,11 +3,13 @@ package com.socket.socket.engine;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -37,6 +39,7 @@ public class Client extends AppCompatActivity{
     private TextView textViewMessages;
     private EditText editTextMessage;
     private ImageButton buttonInvio;
+    private ScrollView chatSV;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -80,6 +83,7 @@ public class Client extends AppCompatActivity{
         textViewMessages = findViewById(R.id.server_out_message);
         editTextMessage = findViewById(R.id.server_in_message);
         buttonInvio = findViewById(R.id.server_btn_send);
+        chatSV = findViewById(R.id.server_scrollView);
 
         textViewIP.setText(String.format("%s: %s", getString(R.string.ipaddress), SERVER_IP));
         textViewPort.setText(String.format("%s: %s", getString(R.string.port), SERVER_PORT));
@@ -123,6 +127,7 @@ public class Client extends AppCompatActivity{
                 final String message = input.readUTF();
                 if (message != null) {
                     runOnUiThread(() -> textViewMessages.append(String.format("%s: %s\n", getString(R.string.server), message)));
+                    chatSV.fullScroll(View.FOCUS_DOWN);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -136,6 +141,7 @@ public class Client extends AppCompatActivity{
 
         runOnUiThread(() -> {
             textViewMessages.append(String.format("%s: %s\n", getString(R.string.client), message));
+            chatSV.fullScroll(View.FOCUS_DOWN);
             editTextMessage.setText(new String());
         });
     }

@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -43,6 +44,7 @@ public class Server extends AppCompatActivity{
     private TextView textViewMessages;
     private EditText editTextMessage;
     private ImageButton buttonInvio;
+    private ScrollView chatSV;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -66,6 +68,7 @@ public class Server extends AppCompatActivity{
         textViewMessages = findViewById(R.id.server_out_message);
         editTextMessage = findViewById(R.id.server_in_message);
         buttonInvio = findViewById(R.id.server_btn_send);
+        chatSV = findViewById(R.id.server_scrollView);
 
         try {
             SERVER_IP = getLocalIpAddress();
@@ -126,7 +129,11 @@ public class Server extends AppCompatActivity{
             try {
                 final String message = input.readUTF();
                 if (message != null) {
-                    runOnUiThread(() -> textViewMessages.append(String.format("%s: %s\n", getString(R.string.client), message)));
+                    runOnUiThread(() -> {
+                        textViewMessages.append(String.format("%s: %s\n", getString(R.string.client), message));
+                        chatSV.fullScroll(View.FOCUS_DOWN);
+                    });
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -140,6 +147,7 @@ public class Server extends AppCompatActivity{
 
         runOnUiThread(() -> {
             textViewMessages.append(String.format("%s: %s\n", getString(R.string.server), message));
+            chatSV.fullScroll(View.FOCUS_DOWN);
             editTextMessage.setText(new String());
         });
     }
