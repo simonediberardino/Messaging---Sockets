@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.socket.socket.R;
 
 public class Utility{
-    public static void goTo(AppCompatActivity c, Class cl){
+    public static void navigateTo(AppCompatActivity c, Class cl){
         Intent i = new Intent(c,cl);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         c.startActivity(i);

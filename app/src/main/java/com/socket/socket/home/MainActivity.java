@@ -28,18 +28,26 @@ import com.socket.socket.engine.Server;
 import com.socket.socket.utility.Utility;
 
 public class MainActivity extends AppCompatActivity{
-
+    /**
+     * Metodo che viene eseguito non appena l'activity principale viene creata;
+     * @return void;
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
+        // Si imposta l'applicazione in fullscreen;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        // Si imposta il layout da visualizzare;
         setContentView(R.layout.activity_main);
 
+        // Si abilita la topbar personalizzata;
         Utility.enableTopBar(this);
+
+        // Si ridimensionano tutti le view dell'interfaccia grafica in base alla dimensione dello schermo;
         Utility.ridimensionamento(this, findViewById(R.id.parent));
 
         setListeners();
@@ -51,7 +59,7 @@ public class MainActivity extends AppCompatActivity{
         Button closeApp = findViewById(R.id.main_closeapp);
 
         startServer.setOnClickListener(v -> {
-            Utility.goTo(this, Server.class);
+            Utility.navigateTo(this, Server.class);
         });
 
         joinServer.setOnClickListener(v -> {
@@ -108,7 +116,7 @@ public class MainActivity extends AppCompatActivity{
         });
 
         close.setOnClickListener(v -> {
-            this.onBackPressed();
+            dialog.dismiss();
         });
 
         dialog.show();
