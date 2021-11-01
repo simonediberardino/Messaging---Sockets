@@ -23,5 +23,5 @@
     <string name="invalidaddress">Invalid IP Address.</string>
     <string name="invalidportnumber">Invalid port number.</string>
     <string name="connectionerror">Couldn\'t connect to the server.</string>
-
+    <string name="closesocket">Closing socket?</string>
 </resources>

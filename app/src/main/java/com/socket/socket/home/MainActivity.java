@@ -53,6 +53,11 @@ public class MainActivity extends AppCompatActivity{
         setListeners();
     }
 
+    /**
+     * Questo metodo imposta i listener per ogni bottone presente nell'interfaccia grafica;
+     * @return void;
+     */
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void setListeners(){
         Button startServer = findViewById(R.id.main_startserver);
         Button joinServer = findViewById(R.id.main_joinserver);
@@ -71,10 +76,16 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    /**
+     * Questo metodo crea una input dialog che permette di inserire le informazioni del server a cui il client dovrà connettersi;
+     * @return void;
+     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void joinServerDialog(){
+        // Si crea una nuova dialog;
         Dialog dialog = new Dialog(this);
 
+        // Si imposta il layout della dialog;
         dialog.setContentView(R.layout.input_join_server);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -85,8 +96,10 @@ public class MainActivity extends AppCompatActivity{
 
         ImageView close = dialog.findViewById(R.id.input_closeDialog);
 
+        // Si ridimensiona la dialog in base alla dimensione dello schermo;
         Utility.ridimensionamento(this, parentView);
 
+        // Si imposta un listener al bottone di conferma;
         confirmBtn.setOnClickListener(v -> {
             String address = addressInput.getText().toString();
 
@@ -94,20 +107,25 @@ public class MainActivity extends AppCompatActivity{
             try{
                 port = Integer.parseInt(portInput.getText().toString());
             }catch(Exception e){
+                // Se la porta non è un numero intero si visualizza un messaggio di errore;
                 Utility.oneLineDialog(this, getString(R.string.invalidportnumber), null);
                 return;
             }
 
+            // Se l'indirizzo IP non è un indirizzo valido si visualizza un messaggio di errore;
             if(!InetAddresses.isNumericAddress(address)){
                 Utility.oneLineDialog(this, getString(R.string.invalidaddress), null);
                 return;
             }
 
-            if(port < 1024 || port > 65535){
+            // Se la porta non appartiene al range di porte disponibili visualizza un messaggio di errore;
+            final int PORT_MIN = 1024, PORT_MAX = 65535;
+            if(port < PORT_MIN || port > PORT_MAX){
                 Utility.oneLineDialog(this, getString(R.string.invalidportnumber), null);
                 return;
             }
 
+            // Starta una nuova activity passandole le informazioni inserite nella dialog;
             Intent i = new Intent(this, Client.class);
             i.putExtra("address", address);
             i.putExtra("port", port);
@@ -116,12 +134,17 @@ public class MainActivity extends AppCompatActivity{
         });
 
         close.setOnClickListener(v -> {
+            // Chiude la dialog;
             dialog.dismiss();
         });
 
         dialog.show();
     }
 
+    /**
+     * Override del metodo che viene invocato ogni volta che si preme il bottone "indietro";
+     * Visualizza una dialog di conferma prima di chiudere l'applicazione;
+     */
     @Override
     public void onBackPressed() {
         Utility.oneLineDialog(this, this.getString(R.string.confirmleave), this::finishAffinity);

@@ -24,4 +24,5 @@
     <string name="invalidaddress">Indirizzo IP non valido.</string>
     <string name="invalidportnumber">Numero di porta non valido.</string>
     <string name="connectionerror">Non è stato possibile connettersi al server.</string>
+    <string name="closesocket">Chiudere il socket?</string>
 </resources>

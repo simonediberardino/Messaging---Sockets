@@ -1,5 +1,7 @@
 package com.socket.socket.engine;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -234,5 +236,23 @@ public class Server extends AppCompatActivity{
         catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Override del metodo che viene invocato ogni volta che si preme il bottone "indietro";
+     * Visualizza una dialog di conferma prima di chiudere l'applicazione;
+     */
+    @Override
+    public void onBackPressed() {
+        Utility.oneLineDialog(this, this.getString(R.string.closesocket), super::onBackPressed);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+        final Configuration override = new Configuration(newBase.getResources().getConfiguration());
+        override.fontScale = 1.0f;
+        applyOverrideConfiguration(override);
     }
 }
