@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.socket.socket.engine.Client;
 import com.socket.socket.R;
 import com.socket.socket.engine.Server;
+import com.socket.socket.login.loginClass;
 import com.socket.socket.utility.Utility;
 
 public class MainActivity extends AppCompatActivity{
@@ -61,14 +62,32 @@ public class MainActivity extends AppCompatActivity{
     private void setListeners(){
         Button startServer = findViewById(R.id.main_startserver);
         Button joinServer = findViewById(R.id.main_joinserver);
+        Button myAccount = findViewById(R.id.main_account);
+
         Button closeApp = findViewById(R.id.main_closeapp);
 
         startServer.setOnClickListener(v -> {
-            Utility.navigateTo(this, Server.class);
+            if(!loginClass.isLoggedIn()) {
+                Utility.oneLineDialog(this, this.getString(R.string.notloggedin), null);
+            }else{
+                Utility.navigateTo(this, Server.class);
+            }
         });
 
         joinServer.setOnClickListener(v -> {
-            joinServerDialog();
+            if(!loginClass.isLoggedIn()) {
+                Utility.oneLineDialog(this, this.getString(R.string.notloggedin), null);
+            }else{
+                joinServerDialog();
+            }
+        });
+
+        myAccount.setOnClickListener(view -> {
+            if(loginClass.isLoggedIn()){
+
+            }else{
+
+            }
         });
 
         closeApp.setOnClickListener(v -> {

@@ -24,4 +24,7 @@
     <string name="invalidportnumber">Invalid port number.</string>
     <string name="connectionerror">Couldn\'t connect to the server.</string>
     <string name="closesocket">Closing socket?</string>
+    <string name="myaccount">My account</string>
+    <string name="notloggedin">You aren\'t logged in.</string>
+
 </resources>
