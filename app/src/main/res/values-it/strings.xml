@@ -25,6 +25,21 @@
     <string name="invalidportnumber">Numero di porta non valido.</string>
     <string name="connectionerror">Non è stato possibile connettersi al server.</string>
     <string name="closesocket">Chiudere il socket?</string>
-    <string name="myaccount">Il mio account</string>
-    <string name="notloggedin">Non hai effettuato l\'accesso.</string>
+    <string name="register_page">Registrazione</string>
+    <string name="login_page">Login</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Registrati</string>
+    <string name="registersuccess">Registrato con successo!</string>
+    <string name="wrongcredentials">Credenziali errate.</string>
+    <string name="loginsuccess">Loggato con successo!</string>
+    <string name="usernamelength">Il tuo username deve essere lungo almeno {length} caratteri.</string>
+    <string name="invaliddetails">Hai inserito dei dati non validi.</string>
+    <string name="passwordlength">La tua password deve essere lunga almeno {length} caratteri.</string>
+    <string name="emailexists">Questa email è già registrata.</string>
+    <string name="usernameexists">Questo username è già registrato.</string>
+
+
 </resources>

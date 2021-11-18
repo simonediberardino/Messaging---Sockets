@@ -7,6 +7,16 @@ import com.socket.socket.entity.Utente;
 public class FirebaseClass {
     public static String DB_ID = "https://socket-chat-aab65-default-rtdb.europe-west1.firebasedatabase.app/";
 
+    public static boolean isFirebaseStringValid(String string)
+    {
+        string = string.trim();
+
+        if(string.equals("null") || string.isEmpty() || string.contains(".")  || string.contains("#") || string.contains("$") || string.contains("[") || string.contains("]"))
+            return false;
+        else
+            return true;
+    }
+
     public static DatabaseReference getDBRef()
     {
         return FirebaseDatabase.getInstance(DB_ID).getReference();

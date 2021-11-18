@@ -24,7 +24,20 @@
     <string name="invalidportnumber">Invalid port number.</string>
     <string name="connectionerror">Couldn\'t connect to the server.</string>
     <string name="closesocket">Closing socket?</string>
-    <string name="myaccount">My account</string>
-    <string name="notloggedin">You aren\'t logged in.</string>
+    <string name="register_page">Register page</string>
+    <string name="login_page">Login page</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="registersuccess">Registered with success!</string>
+    <string name="wrongcredentials">Wrong credentials.</string>
+    <string name="loginsuccess">Logged successfully!</string>
+    <string name="usernamelength">Your username needs to be atleast {length} characters long.</string>
+    <string name="invaliddetails">You entered invalid details.</string>
+    <string name="passwordlength">Your password needs to be atleast {length} characters long.</string>
+    <string name="emailexists">This email is already registered.</string>
+    <string name="usernameexists">This username is already registered.</string>
 
 </resources>

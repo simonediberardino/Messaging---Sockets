@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/register_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="800px"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/register_loginUsernameIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/register_UsernameField"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/register_UsernameField"
+                app:srcCompat="@drawable/ic_baseline_account_circle_24" />
+
+            <ImageView
+                android:id="@+id/register_emailIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/register_PasswordField"
+                app:layout_constraintStart_toStartOf="@+id/register_loginUsernameIcon"
+                app:layout_constraintTop_toTopOf="@+id/register_PasswordField"
+                app:srcCompat="@drawable/ic_baseline_email_24" />
+
+            <ImageView
+                android:id="@+id/register_confirmPasswordIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/register_ConfirmPasswordField"
+                app:layout_constraintStart_toStartOf="@+id/register_emailIcon"
+                app:layout_constraintTop_toTopOf="@+id/register_ConfirmPasswordField"
+                app:srcCompat="@drawable/ic_baseline_lock_24" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/register_UsernameField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/register_loginUsernameIcon"
+                app:layout_constraintTop_toBottomOf="@+id/register_Title">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/register_UsernameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/username" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/register_PasswordField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/register_UsernameField"
+                app:layout_constraintStart_toStartOf="@+id/register_UsernameField"
+                app:layout_constraintTop_toBottomOf="@+id/register_UsernameField">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/register_EmailInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/email"
+                    android:password="false" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/register_ConfirmPasswordField"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/register_UsernameField"
+                app:layout_constraintStart_toStartOf="@+id/register_UsernameField"
+                app:layout_constraintTop_toBottomOf="@+id/register_PasswordField">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/register_PasswordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password"
+                    android:password="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/register_Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/carter_one"
+                android:shadowColor="#000"
+                android:shadowDx="2"
+                android:shadowDy="5"
+                android:shadowRadius="1.5"
+                android:text="@string/register_page"
+                android:textAllCaps="false"
+                android:textColor="@color/green"
+                android:textSize="55px"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/register_Confirm"
+                android:layout_width="300px"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:alpha="0.85"
+                android:background="@drawable/green_button"
+                android:text="@string/register"
+                android:textSize="35px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register_ConfirmPasswordField" />
+
+            <ImageView
+                android:id="@+id/register_Close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_close" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

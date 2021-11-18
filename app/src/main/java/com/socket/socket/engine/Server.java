@@ -25,6 +25,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Server extends AppCompatActivity{
     // Indirizzo del socket da creare;
@@ -32,12 +33,7 @@ public class Server extends AppCompatActivity{
     // Porta del socket da creare (Default: 8080);
     private final int SERVER_PORT = 8080;
 
-    // Oggetto di tipo DataOutputStream che gestirà i messaggi in uscita;
-    private DataOutputStream output;
-
-    // Oggetto di tipo DataInputStream che gestirà i messaggi in entrata;
-    private DataInputStream input;
-
+    private ArrayList<Instance> instances;
     private ServerSocket serverSocket;
 
     // Oggetti relativi all'interfaccia grafica;
@@ -73,7 +69,8 @@ public class Server extends AppCompatActivity{
         initializate();
 
         // Creazione di un nuovo thread per non interrompere il main thread durante la creazione del server socket;
-        new Thread(this::startSocketServer).start();
+        startSocketServer();
+        new Thread(this::listenClients).start();
     }
 
     /**
@@ -90,6 +87,8 @@ public class Server extends AppCompatActivity{
 
         SERVER_IP = getLocalIpAddress();
 
+        instances = new ArrayList<>();
+
         // La box che permette di inviare i messaggi al client è disattivata fino a quando il client non si connette al server;
         editTextMessage.setEnabled(false);
 
@@ -100,7 +99,8 @@ public class Server extends AppCompatActivity{
                 // Creazione di un nuovo thread per non interrompere il main thread durante l'invio del messaggio al client;
                 new Thread(() -> {
                     try{
-                        sendMessage(message);
+                        for(Instance i : instances)
+                            sendMessage(i, message);
                     }
                     catch(IOException e){
                         e.printStackTrace();
@@ -115,7 +115,6 @@ public class Server extends AppCompatActivity{
      * @return void;
      */
     private void startSocketServer(){
-        final Socket socket;
         try {
             // Creazione del socket;
             serverSocket = new ServerSocket(SERVER_PORT);
@@ -126,15 +125,20 @@ public class Server extends AppCompatActivity{
                 textViewIP.setText(String.format("%s: %s", getString(R.string.ipaddress), SERVER_IP));
                 textViewPort.setText(String.format("%s: %s", getString(R.string.port), SERVER_PORT));
             });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void listenClients(){
+        Socket socket;
+
+        while(serverSocket != null){
             try {
                 socket = serverSocket.accept();
 
-                // Assegnazione dello stream output del socket;
-                output = new DataOutputStream(socket.getOutputStream());
-
-                // Assegnazione dello stream input del socket;
-                input = new DataInputStream(socket.getInputStream());
+                Instance clientInstance = new Instance(new DataOutputStream(socket.getOutputStream()), new DataInputStream(socket.getInputStream()));
+                instances.add(clientInstance);
 
                 runOnUiThread(() -> {
                     // Dialog di conferma;
@@ -143,30 +147,34 @@ public class Server extends AppCompatActivity{
                 });
 
                 // Il server si mette in ascolto del client;
-                new Thread(this::messageListener).start();
+                new Thread(() -> messageListener(clientInstance)).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
     }
 
     /**
      * In questo metodo l'oggetto input si mette in ascolto del client e vengono stampati gli eventuali messaggi in entrata;
      * @return void;
      */
-    private void messageListener(){
+    private void messageListener(Instance instance){
         System.out.println("Server in ascolto del client.");
 
         // Si mette in ascolto del client fin tanto che l'oggetto input è definito;
-        while (input != null) {
+        while (instance.getInput() != null) {
             try {
                 // Si legge il messaggio in entrata;
-                final String message = input.readUTF();
+                final String message = instance.getInput().readUTF();
                 // Lo si stampa sono nel caso in cui non sia null;
                 if (message != null) {
                     System.out.printf("Messaggio ricevuto: %s.\n", message);
+
+                    for(Instance i : instances){
+                        if(i != instance)
+                            sendMessage(i, message);
+                    }
 
                     runOnUiThread(() -> {
                         textViewMessages.append(String.format("%s: %s\n", getString(R.string.client), message));
@@ -186,9 +194,9 @@ public class Server extends AppCompatActivity{
      * @param message da inviare al server;
      * @throws IOException se si riscontra un errore durante l'invio di un messaggio al client;
      */
-    private void sendMessage(String message) throws IOException{
-        output.writeUTF(message);
-        output.flush();
+    private void sendMessage(Instance instance, String message) throws IOException{
+        instance.getOutput().writeUTF(message);
+        instance.getOutput().flush();
 
         System.out.printf("%s inviato con successo.\n", message);
 
@@ -225,11 +233,13 @@ public class Server extends AppCompatActivity{
             if(serverSocket != null)
                 serverSocket.close();
 
-            if(output != null)
-                output.close();
+            for(Instance i : instances){
+                if(i.getOutput() != null)
+                    i.getOutput().close();
 
-            if(input != null)
-                input.close();
+                if(i.getInput() != null)
+                    i.getInput().close();
+            }
 
             System.out.println("Socket chiuso con successo.");
         }
@@ -254,5 +264,23 @@ public class Server extends AppCompatActivity{
         final Configuration override = new Configuration(newBase.getResources().getConfiguration());
         override.fontScale = 1.0f;
         applyOverrideConfiguration(override);
+    }
+
+    private static class Instance{
+        private final DataOutputStream output;
+        private final DataInputStream input;
+
+        public Instance(DataOutputStream output, DataInputStream input){
+            this.output = output;
+            this.input = input;
+        }
+
+        public DataOutputStream getOutput(){
+            return output;
+        }
+
+        public DataInputStream getInput(){
+            return input;
+        }
     }
 }
