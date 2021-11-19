@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telecom.Call;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,12 +14,21 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.NotNull;
 import com.socket.socket.R;
+import com.socket.socket.activities.MainActivity;
+import com.socket.socket.data.SharedPrefs;
 import com.socket.socket.entity.Message;
+import com.socket.socket.firebase.FirebaseClass;
 import com.socket.socket.utility.Utility;
 
 import org.json.JSONException;
@@ -35,11 +45,14 @@ import java.net.Socket;
 
 import static com.socket.socket.utility.LoginUtility.getUsername;
 
+//@TODO: Aggiungere lista server;
+
 public class Client extends AppCompatActivity{
     // Indirizzo IP del server a cui connettersi;
-    private String SERVER_IP;
+    private String SERVER_IP, SERVER_IP_FB;
+
     // Porta del server a cui connettersi;
-    private int SERVER_PORT;
+    private int SERVER_PORT = Server.SERVER_PORT;
 
     // Oggetto di tipo DataOutputStream che gestirà i messaggi in uscita;
     private DataOutputStream output;
@@ -81,35 +94,17 @@ public class Client extends AppCompatActivity{
         Bundle extras = getIntent().getExtras();
 
         // Si prelevano le informazioni inserite nella dialog nella activity precedente;
+        String passwordEntered = extras.getString("pw");
         SERVER_IP = extras.getString("address");
-        SERVER_PORT = extras.getInt("port");
+        SERVER_IP_FB = SERVER_IP.replace(".", "_");
 
         // Inizializzazione degli elementi dell'interfaccia grafica e dei listener;
         initializate();
 
+        handleTimeout();
+
         // Creazione di un nuovo thread per non interrompere il main thread durante la connessione al server;
         new Thread(this::connectToServer).start();
-
-        // Gestione del timeout della richiesta: se dopo 2000ms il socket server è null (ovvero non ha risposto), si visualizza un messaggio di errore;
-        final int timeout = 2000;
-        new Handler().postDelayed(() -> {
-            if(socket == null){
-                // Visualizzazione di una dialog di errore;
-                Utility.oneLineDialog(this,
-                        // Titolo della dialog ("Non è stato possibile connettersi al server");
-                        getString(R.string.connectionerror),
-                        // Testo della prima opzione della dialog ("OK");
-                        getString(R.string.ok),
-                        // Testo della seconda opzione della dialog ("ANNULLA");
-                        getString(R.string.cancel),
-                        // Callback da eseguire alla pressione del primo tasto (Ritorna al menu principale);
-                        this::onBackPressed,
-                        // Callback da eseguire alla pressione del secondo tasto (Ritorna al menu principale);
-                        this::onBackPressed,
-                        // Callback da eseguire alla chiusura della dialog (Ritorna al menu principale);
-                        this::onBackPressed);
-            }
-        }, timeout);
     }
 
     /**
@@ -149,6 +144,29 @@ public class Client extends AppCompatActivity{
         });
     }
 
+    private void handleTimeout(){
+        // Gestione del timeout della richiesta: se dopo 2000ms il socket server è null (ovvero non ha risposto), si visualizza un messaggio di errore;
+        final int timeout = 2000;
+        new Handler().postDelayed(() -> {
+            Runnable returnToMainMenu = () -> Utility.navigateTo(this, MainActivity.class);
+            if(socket == null){
+                // Visualizzazione di una dialog di errore;
+                Utility.oneLineDialog(this,
+                        // Titolo della dialog ("Non è stato possibile connettersi al server");
+                        getString(R.string.connectionerror),
+                        // Testo della prima opzione della dialog ("OK");
+                        getString(R.string.ok),
+                        // Testo della seconda opzione della dialog ("ANNULLA");
+                        getString(R.string.cancel),
+                        // Callback da eseguire alla pressione del primo tasto (Ritorna al menu principale);
+                        returnToMainMenu,
+                        // Callback da eseguire alla pressione del secondo tasto (Ritorna al menu principale);
+                        returnToMainMenu,
+                        // Callback da eseguire alla chiusura della dialog (Ritorna al menu principale);
+                        returnToMainMenu);
+            }
+        }, timeout);
+    }
     /**
      * Questo metodo connette il client al server, aggiorna le varie TextView con le informazioni del server e starta il listener dei messaggi;
      * @return void;
@@ -186,32 +204,57 @@ public class Client extends AppCompatActivity{
      * @return void;
      */
     private void messageListener(){
-        // Si mette in ascolto del client fin tanto che l'oggetto input è definito;
+        // Si mette in ascolto del server fin tanto che l'oggetto input è definito;
         while (input != null) {
             try {
                 // Si legge il messaggio in entrata;
-                final String jsonString = input.readUTF();
-                // Lo si stampa sono nel caso in cui non sia null;
-                if (jsonString != null) {
-                    System.out.printf("Messaggio ricevuto: %s.\n", jsonString);
+                final String messageReceived = input.readUTF();
 
-                    Message message = (Message) Utility.jsonStringToObject(jsonString, Message.class);
+                if(messageReceived == null)
+                    continue;
 
-                    runOnUiThread(() -> {
-                        String finalMessage = String.format("%s: %s", message.getSender(), message.getContent());
-                        textViewMessages.append(finalMessage);
+                System.out.printf("Messaggio ricevuto: %s.\n", messageReceived);
+                Message message = (Message) Utility.jsonStringToObject(messageReceived, Message.class);
 
-                        // Scrolla la chat all'ultima riga ogni volta che si riceve un messaggio;
-                        chatSV.fullScroll(View.FOCUS_DOWN);
-                        editTextMessage.setText(new String());
-                    });
-                }
+                runOnUiThread(() -> {
+                    String finalMessage = String.format("%s: %s", message.getSender(), message.getContent());
+                    textViewMessages.append(finalMessage);
+
+                    // Scrolla la chat all'ultima riga ogni volta che si riceve un messaggio;
+                    chatSV.fullScroll(View.FOCUS_DOWN);
+                    editTextMessage.setText(new String());
+                });
             } catch (IOException e) {
+                disconnect();
                 e.printStackTrace();
+                return;
             }
         }
     }
 
+    private void disconnect(){
+        try{
+            /*Si chiudono i socket e gli oggetti di input e output (Dopo aver effettuato
+            un check per assicurarsi che non siano null per evitare la NullPointerException;*/
+            if(socket != null)
+                socket.close();
+
+            if(output != null)
+                output.close();
+
+            if(input != null)
+                input.close();
+
+            this.runOnUiThread(() -> {
+                Toast.makeText(this, this.getString(R.string.server_disconnected), Toast.LENGTH_SHORT).show();
+                Utility.navigateTo(this, MainActivity.class);
+            });
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    
     /**
      * Questo metodo invia un messaggio al server utilizzando l'oggetto che gestisce i messaggi in uscita;
      * @param content da inviare al server;
@@ -235,24 +278,7 @@ public class Client extends AppCompatActivity{
     @Override
     protected void onStop(){
         super.onStop();
-
-        try{
-            /*Si chiudono i socket e gli oggetti di input e output (Dopo aver effettuato
-            un check per assicurarsi che non siano null per evitare la NullPointerException;*/
-            if(socket != null)
-                socket.close();
-
-            if(output != null)
-                output.close();
-
-            if(input != null)
-                input.close();
-
-            System.out.println("Socket chiuso con successo.");
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
+        disconnect();
     }
 
     /**

@@ -15,6 +15,7 @@
     <string name="confirmleave">Closing app?</string>
     <string name="inserttext">Insert text…</string>
     <string name="confirm">Confirm</string>
+    <string name="create">Create</string>
     <string name="connect">Connect</string>
     <string name="info">Socket info</string>
     <string name="client">Client</string>
@@ -39,5 +40,12 @@
     <string name="passwordlength">Your password needs to be atleast {length} characters long.</string>
     <string name="emailexists">This email is already registered.</string>
     <string name="usernameexists">This username is already registered.</string>
-
+    <string name="back">Go back</string>
+    <string name="serverslist">Servers list</string>
+    <string name="joinviaip">Join via IP</string>
+    <string name="server_disconnected">Disconnected from the server.</string>
+    <string name="servername">Server name</string>
+    <string name="serverpw">Server password (Optional)</string>
+    <string name="invalidservername">Please enter a valid server name</string>
+    <string name="invalidiporpw">Invalid IP Address or password</string>
 </resources>

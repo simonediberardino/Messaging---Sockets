@@ -1,4 +1,4 @@
-package com.socket.socket.home;
+package com.socket.socket.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -83,11 +83,11 @@ public class MainActivity extends AppCompatActivity{
         Button closeApp = findViewById(R.id.main_closeapp);
 
         startServer.setOnClickListener(v -> {
-            Utility.navigateTo(this, Server.class);
+            createServerDialog();
         });
 
         joinServer.setOnClickListener(v -> {
-            joinServerDialog();
+            Utility.navigateTo(this, JoinServer.class);
         });
 
         closeApp.setOnClickListener(v -> {
@@ -95,59 +95,37 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-    /**
-     * Questo metodo crea una input dialog che permette di inserire le informazioni del server a cui il client dovrà connettersi;
-     * @return void;
-     */
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    public void joinServerDialog(){
+    private void createServerDialog(){
         // Si crea una nuova dialog;
         Dialog dialog = new Dialog(this);
 
         // Si imposta il layout della dialog;
-        dialog.setContentView(R.layout.input_join_server);
+        dialog.setContentView(R.layout.input_create_server);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        ViewGroup parentView = dialog.findViewById(R.id.input_parent);
-        TextInputEditText addressInput = dialog.findViewById(R.id.input_addressDialog);
-        TextInputEditText portInput = dialog.findViewById(R.id.input_portDialog);
-        Button confirmBtn = dialog.findViewById(R.id.input_okDialog);
-
-        ImageView close = dialog.findViewById(R.id.input_closeDialog);
-
-        // Si ridimensiona la dialog in base alla dimensione dello schermo;
-        Utility.ridimensionamento(this, parentView);
+        ViewGroup parentView = dialog.findViewById(R.id.create_parent);
+        TextInputEditText serverNameET = dialog.findViewById(R.id.create_name);
+        TextInputEditText serverPWET = dialog.findViewById(R.id.create_pw);
+        Button confirmBtn = dialog.findViewById(R.id.create_okDialog);
+        ImageView close = dialog.findViewById(R.id.create_closeDialog);
 
         // Si imposta un listener al bottone di conferma;
         confirmBtn.setOnClickListener(v -> {
-            String address = addressInput.getText().toString();
+            String serverName = serverNameET.getText().toString();
+            String serverPW = serverPWET.getText().toString();
 
-            int port;
-            try{
-                port = Integer.parseInt(portInput.getText().toString());
-            }catch(Exception e){
-                // Se la porta non è un numero intero si visualizza un messaggio di errore;
-                Utility.oneLineDialog(this, getString(R.string.invalidportnumber), null);
+            if(!isFirebaseStringValid(serverName) || serverName.isEmpty()){
+                dialog.dismiss();
+                Utility.oneLineDialog(this, this.getString(R.string.invalidservername), null);
                 return;
             }
 
-            // Se l'indirizzo IP non è un indirizzo valido si visualizza un messaggio di errore;
-            if(!InetAddresses.isNumericAddress(address)){
-                Utility.oneLineDialog(this, getString(R.string.invalidaddress), null);
-                return;
-            }
+            dialog.dismiss();
 
-            // Se la porta non appartiene al range di porte disponibili visualizza un messaggio di errore;
-            final int PORT_MIN = 1024, PORT_MAX = 65535;
-            if(port < PORT_MIN || port > PORT_MAX){
-                Utility.oneLineDialog(this, getString(R.string.invalidportnumber), null);
-                return;
-            }
-
-            // Starta una nuova activity passandole le informazioni inserite nella dialog;
-            Intent i = new Intent(this, Client.class);
-            i.putExtra("address", address);
-            i.putExtra("port", port);
+            Intent i = new Intent(this, Server.class);
+            i.putExtra("serverName", serverName);
+            i.putExtra("serverPW", Utility.getMd5(serverPW));
 
             this.startActivity(i);
         });
@@ -156,6 +134,10 @@ public class MainActivity extends AppCompatActivity{
             // Chiude la dialog;
             dialog.dismiss();
         });
+
+        // Si ridimensiona la dialog in base alla dimensione dello schermo;
+        Utility.ridimensionamento(this, parentView);
+
 
         dialog.show();
     }
@@ -317,7 +299,7 @@ public class MainActivity extends AppCompatActivity{
                                     Utility.oneLineDialog(MainActivity.this, MainActivity.this.getString(R.string.usernameexists), null);
                                 }else{
                                     Utente utente = new Utente(username, hashPassword);
-                                    FirebaseClass.addToFirebase(email, utente);
+                                    FirebaseClass.addUserToFirebase(email, utente);
 
                                     SharedPrefs.setUsername(username);
                                     SharedPrefs.setPassword(hashPassword);

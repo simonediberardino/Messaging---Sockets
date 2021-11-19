@@ -16,6 +16,7 @@
     <string name="confirmleave">Chiudere l\'app?</string>
     <string name="inserttext">Inserisci il testo…</string>
     <string name="confirm">Conferma</string>
+    <string name="create">Crea</string>
     <string name="connect">Connettiti</string>
     <string name="info">Info del socket</string>
     <string name="client">Client</string>
@@ -40,6 +41,12 @@
     <string name="passwordlength">La tua password deve essere lunga almeno {length} caratteri.</string>
     <string name="emailexists">Questa email è già registrata.</string>
     <string name="usernameexists">Questo username è già registrato.</string>
-
-
+    <string name="back">Torna indietro</string>
+    <string name="serverslist">Lista server</string>
+    <string name="joinviaip">Accedi con IP</string>
+    <string name="server_disconnected">Disconnesso dal server.</string>
+    <string name="servername">Nome del server</string>
+    <string name="serverpw">Password del server (Opzionale)</string>
+    <string name="invalidservername">Inserisci un nome valido</string>
+    <string name="invalidiporpw">Indirizzo IP o password non validi</string>
 </resources>

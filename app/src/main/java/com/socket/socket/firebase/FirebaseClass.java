@@ -2,6 +2,7 @@ package com.socket.socket.firebase;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.socket.socket.engine.Server;
 import com.socket.socket.entity.Utente;
 
 public class FirebaseClass {
@@ -27,11 +28,15 @@ public class FirebaseClass {
         return FirebaseDatabase.getInstance(DB_ID).getReference(path);
     }
 
-    public static void addToFirebase(String username, Utente utente)
+    public static void addUserToFirebase(String email, Utente utente)
     {
-        getDBRef().child(username).setValue(utente);
+        getDBRef().child(email).setValue(utente);
     }
 
+    public static void addServerToFirebase(String serverIp, Server.ServerInstance server)
+    {
+        getDBRef().child(serverIp).setValue(server);
+    }
 
     public static <T> void editFieldFirebase(String username, String fieldToUpdate, T value)
     {

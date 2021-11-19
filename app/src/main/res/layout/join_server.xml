@@ -16,7 +16,7 @@
 
 
         <RadioButton
-            android:id="@+id/main_startserver"
+            android:id="@+id/join_serverslist"
             android:layout_width="400px"
             android:layout_height="120px"
             android:layout_marginEnd="5dp"
@@ -25,7 +25,7 @@
 
             android:background="@drawable/yellow_btn_icon"
             android:button="@android:color/transparent"
-            android:drawableRight="@drawable/ic_baseline_add_circle_outline_24"
+            android:drawableRight="@drawable/book"
             android:fontFamily="@font/carter_one"
             android:gravity="center|left"
             android:paddingLeft="15dp"
@@ -34,7 +34,7 @@
             android:shadowDx="2"
             android:shadowDy="5"
             android:shadowRadius="1.5"
-            android:text="@string/startserver"
+            android:text="@string/serverslist"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="35px"
@@ -44,7 +44,7 @@
 
 
         <RadioButton
-            android:id="@+id/main_closeapp"
+            android:id="@+id/join_goback"
             android:layout_width="400px"
             android:layout_height="120px"
             android:layout_marginTop="5dp"
@@ -60,17 +60,17 @@
             android:shadowDx="2"
             android:shadowDy="5"
             android:shadowRadius="1.5"
-            android:text="@string/close"
+            android:text="@string/back"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="35px"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/main_joinserver" />
+            app:layout_constraintTop_toBottomOf="@+id/join_joinviaip" />
 
         <RadioButton
-            android:id="@+id/main_joinserver"
+            android:id="@+id/join_joinviaip"
             android:layout_width="400px"
             android:layout_height="120px"
             android:layout_marginStart="5dp"
@@ -87,12 +87,12 @@
             android:shadowDx="2"
             android:shadowDy="5"
             android:shadowRadius="1.5"
-            android:text="@string/joinserver"
+            android:text="@string/joinviaip"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="35px"
             app:layout_constraintStart_toEndOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/main_startserver" />
+            app:layout_constraintTop_toTopOf="@+id/join_serverslist" />
 
 
         <View

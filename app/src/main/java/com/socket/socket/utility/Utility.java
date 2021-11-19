@@ -55,6 +55,9 @@ public class Utility{
     }
 
     public static String getMd5(String input){
+        if(input.isEmpty())
+            return input;
+
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
 

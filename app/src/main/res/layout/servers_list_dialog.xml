@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/slist_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/slist_constraintLayout"
+        android:layout_width="900px"
+        android:layout_height="900px"
+        android:background="@drawable/round_box"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.008">
+
+        <View
+            android:id="@+id/slist_helper"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/slist_helper1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.455" />
+
+        <View
+            android:id="@+id/slist_helper6"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/green"
+            app:layout_constraintBottom_toTopOf="@+id/slist_helper"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/slist_titolo"
+            app:layout_constraintVertical_bias="0.733" />
+
+        <View
+            android:id="@+id/slist_helper1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/slist_helper3"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toTopOf="@+id/slist_helper"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/slist_titolo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:fontFamily="@font/carter_one"
+            android:paddingRight="2dp"
+            android:shadowColor="#000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="1.5"
+            android:text="@string/serverslist"
+            android:textAllCaps="true"
+            android:textColor="@color/green"
+            android:textSize="70px"
+            app:layout_constraintBottom_toBottomOf="@+id/slist_helper3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/slist_helper3"
+            app:layout_constraintVertical_bias="0.4" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/slist_helper1"
+            app:layout_constraintStart_toStartOf="@+id/slist_helper1"
+            app:layout_constraintTop_toBottomOf="@+id/slist_helper">
+
+            <ProgressBar
+                android:id="@+id/slist_loadingBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintBottom_toBottomOf="@+id/slist_scrollView"
+                app:layout_constraintEnd_toEndOf="@+id/slist_scrollView"
+                app:layout_constraintStart_toStartOf="@+id/slist_scrollView"
+                app:layout_constraintTop_toTopOf="@+id/slist_scrollView" />
+
+            <TextView
+                android:id="@+id/slist_alert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/slist_scrollView"
+                app:layout_constraintEnd_toEndOf="@+id/slist_scrollView"
+                app:layout_constraintStart_toStartOf="@+id/slist_scrollView"
+                app:layout_constraintTop_toTopOf="@+id/slist_scrollView" />
+
+            <ScrollView
+                android:id="@+id/slist_scrollView"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="16dp"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/slist_scrollViewLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/slist_constraintLayout2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/round_box"
+        app:layout_constraintEnd_toEndOf="@+id/slist_constraintLayout"
+        app:layout_constraintStart_toStartOf="@+id/slist_constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/slist_constraintLayout">
+
+        <LinearLayout
+            android:id="@+id/slist_scrollViewLayoutPersonal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

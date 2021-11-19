@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.socket.socket.R;
 import com.socket.socket.entity.Message;
 import com.socket.socket.entity.Utente;
+import com.socket.socket.firebase.FirebaseClass;
 import com.socket.socket.utility.Utility;
 
 import org.json.JSONException;
@@ -35,12 +36,15 @@ import java.util.ArrayList;
 import static com.socket.socket.utility.LoginUtility.getUsername;
 
 public class Server extends AppCompatActivity{
+    private ServerInstance serverInstance;
+
+    // Porta del socket da creare (Default: 8080);
+    public static final int SERVER_PORT = 8080;
+
     // Indirizzo del socket da creare;
     private String SERVER_IP;
-    // Porta del socket da creare (Default: 8080);
-    private final int SERVER_PORT = 8080;
 
-    private ArrayList<Instance> instances;
+    private ArrayList<ClientInstance> instances;
     private ServerSocket serverSocket;
 
     // Oggetti relativi all'interfaccia grafica;
@@ -109,7 +113,7 @@ public class Server extends AppCompatActivity{
                         Message message = new Message(getUsername(), content);
                         String jsonString = Utility.objectToJsonString(message);
 
-                        for(Instance i : instances)
+                        for(ClientInstance i : instances)
                             sendMessage(i, jsonString);
                     }
                     catch(IOException e){
@@ -126,8 +130,15 @@ public class Server extends AppCompatActivity{
      */
     private void startSocketServer(){
         try {
+            // Si prelevano le informazioni inserite nella dialog nella activity precedente;
+            Bundle extras = getIntent().getExtras();
+            String serverName = extras.getString("serverName");
+            String serverPW = extras.getString("serverPW");
+
             // Creazione del socket;
             serverSocket = new ServerSocket(SERVER_PORT);
+            serverInstance = new ServerInstance(serverName, SERVER_IP, serverPW, SERVER_PORT);
+            FirebaseClass.addServerToFirebase(serverInstance.getServerIP(), serverInstance);
 
             System.out.printf("Socket creato con successo! Ascoltando sulla porta %d.\n", SERVER_PORT);
 
@@ -147,7 +158,7 @@ public class Server extends AppCompatActivity{
             try {
                 socket = serverSocket.accept();
 
-                Instance clientInstance = new Instance(new DataOutputStream(socket.getOutputStream()), new DataInputStream(socket.getInputStream()));
+                ClientInstance clientInstance = new ClientInstance(new DataOutputStream(socket.getOutputStream()), new DataInputStream(socket.getInputStream()));
                 instances.add(clientInstance);
 
                 runOnUiThread(() -> {
@@ -169,7 +180,7 @@ public class Server extends AppCompatActivity{
      * In questo metodo l'oggetto input si mette in ascolto del client e vengono stampati gli eventuali messaggi in entrata;
      * @return void;
      */
-    private void messageListener(Instance instance){
+    private void messageListener(ClientInstance instance){
         System.out.println("Server in ascolto del client.");
 
         // Si mette in ascolto del client fin tanto che l'oggetto input è definito;
@@ -181,11 +192,8 @@ public class Server extends AppCompatActivity{
                 if (jsonString != null) {
                     System.out.printf("Messaggio ricevuto: %s.\n", jsonString);
 
-                    Message message = (Message) Utility.jsonStringToObject(jsonString, Message.class);
-
-                    for(Instance i : instances){
+                    for(ClientInstance i : instances)
                          sendMessage(i, jsonString);
-                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -198,7 +206,7 @@ public class Server extends AppCompatActivity{
      * @param jsonString da inviare al server;
      * @throws IOException se si riscontra un errore durante l'invio di un messaggio ai client;
      */
-    private void sendMessage(Instance instance, String jsonString) throws IOException{
+    private void sendMessage(ClientInstance instance, String jsonString) throws IOException{
         Message message = (Message) Utility.jsonStringToObject(jsonString, Message.class);
 
         instance.getOutput().writeUTF(jsonString);
@@ -214,6 +222,27 @@ public class Server extends AppCompatActivity{
             chatSV.fullScroll(View.FOCUS_DOWN);
             editTextMessage.setText(new String());
         });
+    }
+
+    private void closeServer(){
+        try{
+            for(ClientInstance i : instances){
+                if(i.getOutput() != null)
+                    i.getOutput().close();
+
+                if(i.getInput() != null)
+                    i.getInput().close();
+            }
+
+            if(serverSocket != null)
+                serverSocket.close();
+
+            FirebaseClass.deleteFieldFirebase(null, serverInstance.getServerIP());
+            System.out.println("Socket chiuso con successo.");
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -232,27 +261,8 @@ public class Server extends AppCompatActivity{
      */
     @Override
     protected void onStop(){
+        closeServer();
         super.onStop();
-
-        try{
-            /* Si chiudono i socket e gli oggetti di input e output (Dopo aver effettuato un check per assicurarsi che non
-            siano null per evitare la NullPointerException; */
-            if(serverSocket != null)
-                serverSocket.close();
-
-            for(Instance i : instances){
-                if(i.getOutput() != null)
-                    i.getOutput().close();
-
-                if(i.getInput() != null)
-                    i.getInput().close();
-            }
-
-            System.out.println("Socket chiuso con successo.");
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -273,11 +283,11 @@ public class Server extends AppCompatActivity{
         applyOverrideConfiguration(override);
     }
 
-    private static class Instance{
+    private static class ClientInstance{
         private final DataOutputStream output;
         private final DataInputStream input;
 
-        public Instance(DataOutputStream output, DataInputStream input){
+        public ClientInstance(DataOutputStream output, DataInputStream input){
             this.output = output;
             this.input = input;
         }
@@ -288,6 +298,38 @@ public class Server extends AppCompatActivity{
 
         public DataInputStream getInput(){
             return input;
+        }
+    }
+
+    public static class ServerInstance{
+        private String serverName;
+        private String serverIP;
+        private String serverPW;
+        private int serverPort;
+
+        public ServerInstance(){}
+
+        public ServerInstance(String serverName, String serverIP, String serverPW, int serverPort){
+            this.serverName = serverName;
+            this.serverIP = serverIP.replace(".", "_");
+            this.serverPW = serverPW;
+            this.serverPort = serverPort;
+        }
+
+        public String getServerName(){
+            return serverName;
+        }
+
+        public String getServerIP(){
+            return serverIP;
+        }
+
+        public String getServerPW(){
+            return serverPW;
+        }
+
+        public int getServerPort(){
+            return serverPort;
         }
     }
 }
