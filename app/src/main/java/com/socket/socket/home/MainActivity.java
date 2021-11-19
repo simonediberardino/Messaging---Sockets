@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity{
      * Metodo che viene eseguito non appena l'activity principale viene creata;
      * @return void;
      */
-    @RequiresApi(api = Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -316,8 +316,8 @@ public class MainActivity extends AppCompatActivity{
                                 if(snapshot.hasChild(username)){
                                     Utility.oneLineDialog(MainActivity.this, MainActivity.this.getString(R.string.usernameexists), null);
                                 }else{
-                                    Utente utente = new Utente(email, hashPassword);
-                                    FirebaseClass.addToFirebase(username, utente);
+                                    Utente utente = new Utente(username, hashPassword);
+                                    FirebaseClass.addToFirebase(email, utente);
 
                                     SharedPrefs.setUsername(username);
                                     SharedPrefs.setPassword(hashPassword);

@@ -18,7 +18,12 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.socket.socket.R;
+import com.socket.socket.entity.Message;
+import com.socket.socket.entity.Utente;
 import com.socket.socket.utility.Utility;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -26,6 +31,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+
+import static com.socket.socket.utility.LoginUtility.getUsername;
 
 public class Server extends AppCompatActivity{
     // Indirizzo del socket da creare;
@@ -89,18 +96,21 @@ public class Server extends AppCompatActivity{
 
         instances = new ArrayList<>();
 
-        // La box che permette di inviare i messaggi al client è disattivata fino a quando il client non si connette al server;
+        // La box che permette di inviare i messaggi ai client è disattivata fino a quando un client non si connette al server;
         editTextMessage.setEnabled(false);
 
         buttonInvio.setOnClickListener(v -> {
             // Assegnazione e pulizia della stringa contenuta nel box;
-            String message = editTextMessage.getText().toString().trim();
-            if (!message.isEmpty()) {
-                // Creazione di un nuovo thread per non interrompere il main thread durante l'invio del messaggio al client;
+            String content = editTextMessage.getText().toString().trim();
+            if (!content.isEmpty()) {
+                // Creazione di un nuovo thread per non interrompere il main thread durante l'invio del messaggio ai client;
                 new Thread(() -> {
                     try{
+                        Message message = new Message(getUsername(), content);
+                        String jsonString = Utility.objectToJsonString(message);
+
                         for(Instance i : instances)
-                            sendMessage(i, message);
+                            sendMessage(i, jsonString);
                     }
                     catch(IOException e){
                         e.printStackTrace();
@@ -166,22 +176,16 @@ public class Server extends AppCompatActivity{
         while (instance.getInput() != null) {
             try {
                 // Si legge il messaggio in entrata;
-                final String message = instance.getInput().readUTF();
+                final String jsonString = instance.getInput().readUTF();
                 // Lo si stampa sono nel caso in cui non sia null;
-                if (message != null) {
-                    System.out.printf("Messaggio ricevuto: %s.\n", message);
+                if (jsonString != null) {
+                    System.out.printf("Messaggio ricevuto: %s.\n", jsonString);
+
+                    Message message = (Message) Utility.jsonStringToObject(jsonString, Message.class);
 
                     for(Instance i : instances){
-                        if(i != instance)
-                            sendMessage(i, message);
+                         sendMessage(i, jsonString);
                     }
-
-                    runOnUiThread(() -> {
-                        textViewMessages.append(String.format("%s: %s\n", getString(R.string.client), message));
-
-                        // Scrolla la chat all'ultima riga ogni volta che si riceve un messaggio;
-                        chatSV.fullScroll(View.FOCUS_DOWN);
-                    });
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -190,18 +194,21 @@ public class Server extends AppCompatActivity{
     }
 
     /**
-     * Questo metodo invia un messaggio al client utilizzando l'oggetto che gestisce i messaggi in uscita;
-     * @param message da inviare al server;
-     * @throws IOException se si riscontra un errore durante l'invio di un messaggio al client;
+     * Questo metodo invia un messaggio ai client utilizzando l'oggetto che gestisce i messaggi in uscita;
+     * @param jsonString da inviare al server;
+     * @throws IOException se si riscontra un errore durante l'invio di un messaggio ai client;
      */
-    private void sendMessage(Instance instance, String message) throws IOException{
-        instance.getOutput().writeUTF(message);
+    private void sendMessage(Instance instance, String jsonString) throws IOException{
+        Message message = (Message) Utility.jsonStringToObject(jsonString, Message.class);
+
+        instance.getOutput().writeUTF(jsonString);
         instance.getOutput().flush();
 
-        System.out.printf("%s inviato con successo.\n", message);
+        System.out.printf("%s inviato con successo.\n", jsonString);
 
         runOnUiThread(() -> {
-            textViewMessages.append(String.format("%s: %s\n", getString(R.string.server), message));
+            String finalMessage = String.format("%s: %s", message.getSender(), message.getContent());
+            textViewMessages.append(finalMessage);
 
             // Scrolla la chat all'ultima riga ogni volta che si invia un messaggio;
             chatSV.fullScroll(View.FOCUS_DOWN);

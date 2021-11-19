@@ -18,7 +18,11 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.socket.socket.R;
+import com.socket.socket.entity.Message;
 import com.socket.socket.utility.Utility;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -28,6 +32,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import static com.socket.socket.utility.LoginUtility.getUsername;
 
 public class Client extends AppCompatActivity{
     // Indirizzo IP del server a cui connettersi;
@@ -184,15 +190,21 @@ public class Client extends AppCompatActivity{
         while (input != null) {
             try {
                 // Si legge il messaggio in entrata;
-                final String message = input.readUTF();
+                final String jsonString = input.readUTF();
                 // Lo si stampa sono nel caso in cui non sia null;
-                if (message != null) {
-                    runOnUiThread(() -> textViewMessages.append(String.format("%s: %s\n", getString(R.string.server), message)));
+                if (jsonString != null) {
+                    System.out.printf("Messaggio ricevuto: %s.\n", jsonString);
 
-                    // Scrolla la chat all'ultima riga ogni volta che si riceve un messaggio;
-                    chatSV.fullScroll(View.FOCUS_DOWN);
+                    Message message = (Message) Utility.jsonStringToObject(jsonString, Message.class);
 
-                    System.out.printf("Messaggio ricevuto: %s.\n", message);
+                    runOnUiThread(() -> {
+                        String finalMessage = String.format("%s: %s", message.getSender(), message.getContent());
+                        textViewMessages.append(finalMessage);
+
+                        // Scrolla la chat all'ultima riga ogni volta che si riceve un messaggio;
+                        chatSV.fullScroll(View.FOCUS_DOWN);
+                        editTextMessage.setText(new String());
+                    });
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -202,22 +214,17 @@ public class Client extends AppCompatActivity{
 
     /**
      * Questo metodo invia un messaggio al server utilizzando l'oggetto che gestisce i messaggi in uscita;
-     * @param message da inviare al server;
+     * @param content da inviare al server;
      * @throws IOException se si riscontra un errore durante l'invio di un messaggio al server;
      */
-    private void sendMessage(String message) throws IOException{
-        output.writeUTF(message);
+    private void sendMessage(String content) throws IOException{
+        Message message = new Message(getUsername(), content);
+        String jsonString = Utility.objectToJsonString(message);
+
+        output.writeUTF(jsonString);
         output.flush();
 
-        System.out.printf("%s inviato con successo.\n", message);
-
-        runOnUiThread(() -> {
-            textViewMessages.append(String.format("%s: %s\n", getString(R.string.client), message));
-
-            // Scrolla la chat all'ultima riga ogni volta che si invia un messaggio;
-            chatSV.fullScroll(View.FOCUS_DOWN);
-            editTextMessage.setText(new String());
-        });
+        System.out.printf("%s inviato con successo.\n", jsonString);
     }
 
     /**

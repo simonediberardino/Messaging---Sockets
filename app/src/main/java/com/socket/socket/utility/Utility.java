@@ -15,13 +15,45 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
 import com.socket.socket.R;
+import com.socket.socket.entity.Utente;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 public class Utility{
+    public static String objectToJsonString(Object object){
+        return new Gson().toJson(object);
+    }
+
+    public static Object jsonStringToObject(String jsonString, Class x){
+//        String[] jsonStringTokenized = jsonString.split("\\{");
+//        StringBuilder jsonStringResult = new StringBuilder();
+//        System.out.println("Risultato " + jsonString);
+//
+//        for(int i = 1; i < jsonStringTokenized.length; i++)
+//            jsonStringResult.append(String.format("{%s", jsonStringTokenized[i]));
+//
+//        System.out.println("Risultato " + jsonStringResult);
+
+        System.out.println(jsonString + " risultato");
+        return new Gson().fromJson(jsonString, (Type) x);
+    }
+
     public static String getMd5(String input){
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
