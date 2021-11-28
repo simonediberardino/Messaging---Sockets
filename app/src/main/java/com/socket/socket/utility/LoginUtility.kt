@@ -13,7 +13,7 @@ object LoginUtility {
     }
 
     fun isUser(d: DataSnapshot?): Boolean {
-        return d.hasChild("username")
+        return d?.hasChild("username") == true
     }
 
     fun isLoggedIn(): Boolean {
@@ -21,9 +21,9 @@ object LoginUtility {
     }
 
     fun updateEmail() {
-        FirebaseClass.getDBRef().child(SharedPrefs.getEmail())
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot?) {
+        FirebaseClass.getDBRef()?.child(SharedPrefs.getEmail()!!)
+            ?.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
                     for (d in snapshot.getChildren()) {
                         if (d.key == "email") {
                             SharedPrefs.setEmail(d.value.toString())

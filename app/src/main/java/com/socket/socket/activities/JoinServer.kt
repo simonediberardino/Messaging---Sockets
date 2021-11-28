@@ -53,9 +53,9 @@ class JoinServer : AppCompatActivity() {
         val joinViaIpBtn = findViewById<Button?>(R.id.join_joinviaip)
         val serversListBtn = findViewById<Button?>(R.id.join_serverslist)
         val goBackBtn = findViewById<Button?>(R.id.join_goback)
-        joinViaIpBtn.setOnClickListener { v: View? -> joinServerDialog() }
-        serversListBtn.setOnClickListener { v: View? -> serversListDialog() }
-        goBackBtn.setOnClickListener { v: View? -> onBackPressed() }
+        joinViaIpBtn.setOnClickListener { joinServerDialog() }
+        serversListBtn.setOnClickListener { serversListDialog() }
+        goBackBtn.setOnClickListener { onBackPressed() }
     }
 
     /**
@@ -80,7 +80,7 @@ class JoinServer : AppCompatActivity() {
         Utility.ridimensionamento(this, parentView)
 
         // Si imposta un listener al bottone di conferma;
-        confirmBtn.setOnClickListener { v: View? ->
+        confirmBtn.setOnClickListener {
             val address = addressInput.text.toString().trim { it <= ' ' }
             val password = Utility.getMd5(passwordInput.text.toString().trim { it <= ' ' })
             val addressFB = address.replace(".", "_")
@@ -99,7 +99,7 @@ class JoinServer : AppCompatActivity() {
                 this.startActivity(i)
             }) { Utility.oneLineDialog(this, this.getString(R.string.invalidiporpw), null) }
         }
-        close.setOnClickListener { v: View? ->
+        close.setOnClickListener {
             // Chiude la dialog;
             dialog.dismiss()
         }

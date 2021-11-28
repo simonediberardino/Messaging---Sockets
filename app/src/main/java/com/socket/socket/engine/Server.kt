@@ -27,10 +27,10 @@ import java.net.ServerSocket
 import java.net.Socket
 import java.util.*
 
-class Server : AppCompatActivity() {
+public class Server : AppCompatActivity() {
     private var serverInstance: ServerInstance? = null
     // Porta del socket da creare (Default: 8080);
-    private val SERVER_PORT = 8080
+    public var SERVER_PORT = 8080
 
     // Indirizzo del socket da creare;
     private var SERVER_IP: String? = null

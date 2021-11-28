@@ -70,14 +70,14 @@ class MainActivity : AppCompatActivity() {
         val startServer = findViewById<Button?>(R.id.main_startserver)
         val joinServer = findViewById<Button?>(R.id.main_joinserver)
         val closeApp = findViewById<Button?>(R.id.main_closeapp)
-        startServer.setOnClickListener { v: View? -> createServerDialog() }
-        joinServer.setOnClickListener { v: View? ->
+        startServer.setOnClickListener { createServerDialog() }
+        joinServer.setOnClickListener {
             Utility.navigateTo(
                 this,
                 JoinServer::class.java
             )
         }
-        closeApp.setOnClickListener { v: View? -> onBackPressed() }
+        closeApp.setOnClickListener { onBackPressed() }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         val close = dialog.findViewById<ImageView?>(R.id.create_closeDialog)
 
         // Si imposta un listener al bottone di conferma;
-        confirmBtn.setOnClickListener { v: View? ->
+        confirmBtn.setOnClickListener {
             val serverName = serverNameET.text.toString()
             val serverPW = serverPWET.text.toString()
             if (!FirebaseClass.isFirebaseStringValid(serverName) || serverName.isEmpty()) {
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
             i.putExtra("serverPW", Utility.getMd5(serverPW))
             this.startActivity(i)
         }
-        close.setOnClickListener { v: View? ->
+        close.setOnClickListener { 
             // Chiude la dialog;
             dialog.dismiss()
         }
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         val login = dialog.findViewById<Button?>(R.id.login_Confirm)
         val register = dialog.findViewById<Button?>(R.id.login_Register)
         val close = dialog.findViewById<ImageView?>(R.id.login_Close)
-        login.setOnClickListener { v: View? ->
+        login.setOnClickListener { 
             val username = usernameInput.text.toString().trim { it <= ' ' }
             val password = passwordInput.text.toString().trim { it <= ' ' }
             val hashPassword = Utility.getMd5(password)
@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }
         }
-        register.setOnClickListener { v: View? ->
+        register.setOnClickListener { 
             // Nel caso in cui un utente ha inserito i dati di accesso nella pagina di login ma deve ancora registrarsi,
             // ricordiamo i dati inseriti nella pagina di register in modo tale che non dovrà reinserirli nuovamente;
             val previousUsernameInput = usernameInput.text.toString().trim { it <= ' ' }
@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
             dialog.dismiss()
             registerDialog(previousUsernameInput, previousPasswordInput)
         }
-        close.setOnClickListener { v: View? -> dialog.dismiss() }
+        close.setOnClickListener {  dialog.dismiss() }
         Utility.ridimensionamento(this, parentView)
         dialog.show()
     }
@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     protected fun registerDialog(previousUsernameInput: String?, previousPasswordInput: String?) {
         val dialog = Dialog(this)
-        dialog.setOnCancelListener { dialog1: DialogInterface? -> loginDialog() }
+        dialog.setOnCancelListener { loginDialog() }
         dialog.setContentView(R.layout.register_username_dialog)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val parentView = dialog.findViewById<ViewGroup?>(R.id.register_parent)
@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity() {
         passwordInput.setText(previousPasswordInput)
         Thread {
             runOnUiThread {
-                register.setOnClickListener { v: View? ->
+                register.setOnClickListener { 
                     val username = usernameInput.text.toString().trim { it <= ' ' }
                     val password = passwordInput.text.toString().trim { it <= ' ' }
                     val hashPassword = Utility.getMd5(password)
@@ -244,7 +244,7 @@ class MainActivity : AppCompatActivity() {
                     FirebaseClass.getDBRef()?.get()
                         ?.addOnCompleteListener { task: Task<DataSnapshot?>? ->
                             var emailExists = false
-                            outerLoop@ for (d in task?.getResult()?.getChildren()!!) {
+                            outerLoop@ for (d in task?.result?.children!!) {
                                 for (row in d.children) {
                                     if (row.key == "email") {
                                         val emailChecked = row.value.toString()
@@ -288,7 +288,7 @@ class MainActivity : AppCompatActivity() {
                                 })
                         }
                 }
-                close.setOnClickListener { v: View? -> dialog.dismiss() }
+                close.setOnClickListener {  dialog.dismiss() }
                 Utility.ridimensionamento(this, parentView)
                 dialog.show()
             }
@@ -306,7 +306,7 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
-        val override = Configuration(newBase?.getResources()?.configuration)
+        val override = Configuration(newBase?.resources?.configuration)
         override.fontScale = 1.0f
         applyOverrideConfiguration(override)
     }

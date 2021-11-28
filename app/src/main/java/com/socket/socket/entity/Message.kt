@@ -1,7 +1,7 @@
 package com.socket.socket.entity
 
-class Message(var sender: String?, content: String?) {
-    var content: String?
+
+class Message(private var sender: String?, private var content: String?) {
     fun getSender(): String? {
         return sender
     }
@@ -11,9 +11,6 @@ class Message(var sender: String?, content: String?) {
     }
 
     init {
-        this.content = """
-            $content
-            
-            """.trimIndent()
+        this.content = this.content?.trim()
     }
 }

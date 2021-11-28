@@ -23,12 +23,14 @@ import java.net.Socket
 
 //@TODO: Aggiungere lista server;
 class Client : AppCompatActivity() {
+    companion object {
+        // Porta del server a cui connettersi;
+        val SERVER_PORT: Int = 80
+    }
+
     // Indirizzo IP del server a cui connettersi;
     private var SERVER_IP: String? = null
     private var SERVER_IP_FB: String? = null
-
-    // Porta del server a cui connettersi;
-    private val SERVER_PORT: Int = Server.Companion.SERVER_PORT
 
     // Oggetto di tipo DataOutputStream che gestirà i messaggi in uscita;
     private var output: DataOutputStream? = null
@@ -71,9 +73,9 @@ class Client : AppCompatActivity() {
         val extras = intent.extras
 
         // Si prelevano le informazioni inserite nella dialog nella activity precedente;
-        val passwordEntered = extras.getString("pw")
-        SERVER_IP = extras.getString("address")
-        SERVER_IP_FB = SERVER_IP.replace(".", "_")
+        val passwordEntered = extras?.getString("pw")
+        SERVER_IP = extras?.getString("address")
+        SERVER_IP_FB = SERVER_IP?.replace(".", "_")
 
         // Inizializzazione degli elementi dell'interfaccia grafica e dei listener;
         initializate()
@@ -96,26 +98,34 @@ class Client : AppCompatActivity() {
         chatSV = findViewById(R.id.server_scrollView)
 
         // Si scrive l'indirizzo IP del server nella TextView;
-        textViewIP.setText(String.format("%s: %s", getString(R.string.ipaddress), SERVER_IP))
+        with(textViewIP) { this?.setText(String.format("%s: %s", getString(R.string.ipaddress), SERVER_IP)) }
 
         // Si scrive la porta del server nella TextView;
-        textViewPort.setText(String.format("%s: %s", getString(R.string.port), SERVER_PORT))
-        buttonInvio.setOnClickListener(View.OnClickListener { v: View? ->
-            // Assegnazione e pulizia della stringa contenuta nel box;
-            val message = editTextMessage.getText().toString().trim { it <= ' ' }
+        with(textViewPort) {
+            this?.setText(String.format("%s: %s", getString(R.string.port),
+                Companion.SERVER_PORT
+            ))
+        }
 
-            // Se la stringa non è vuota la si invia al server;
-            if (!message.isEmpty()) {
-                // Creazione di un nuovo thread per non interrompere il main thread durante l'invio della richiesta al server;
-                Thread {
-                    try {
-                        sendMessage(message)
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                }.start()
+        with(buttonInvio) {
+            this?.setOnClickListener {
+                val enteredText = editTextMessage
+                // Assegnazione e pulizia della stringa contenuta nel box;
+                val message = enteredText?.getText().toString().trim { it <= ' ' }
+
+                // Se la stringa non è vuota la si invia al server;
+                if (!message.isEmpty()) {
+                    // Creazione di un nuovo thread per non interrompere il main thread durante l'invio della richiesta al server;
+                    Thread {
+                        try {
+                            sendMessage(message)
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                    }.start()
+                }
             }
-        })
+        }
     }
 
     private fun handleTimeout() {
@@ -145,26 +155,28 @@ class Client : AppCompatActivity() {
     private fun connectToServer() {
         try {
             // Connessione al server e creazione del socket;
-            socket = Socket(SERVER_IP, SERVER_PORT)
-            System.out.printf("Connesso a %s:%d con successo!\n", SERVER_IP, SERVER_PORT)
+            socket = Socket(SERVER_IP, Companion.SERVER_PORT)
+            System.out.printf("Connesso a %s:%d con successo!\n", SERVER_IP, Companion.SERVER_PORT)
 
             // Assegnazione dello stream output del socket;
-            output = DataOutputStream(socket.getOutputStream())
+            output = DataOutputStream(socket!!.getOutputStream())
 
             // Assegnazione dello stream input del socket;
-            input = DataInputStream(socket.getInputStream())
+            input = DataInputStream(socket!!.getInputStream())
             runOnUiThread {
 
                 // Dialog di conferma;
                 Utility.oneLineDialog(this, getString(R.string.connectsuccessfully), null)
-                textViewIP.setText(
+                textViewIP?.setText(
                     String.format(
                         "%s: %s",
                         getString(R.string.ipaddress),
                         SERVER_IP
                     )
                 )
-                textViewPort.setText(String.format("%s: %s", getString(R.string.port), SERVER_PORT))
+                textViewPort?.setText(String.format("%s: %s", getString(R.string.port),
+                    SERVER_PORT
+                ))
             }
 
             // Il client si mette in ascolto del server;
@@ -183,18 +195,18 @@ class Client : AppCompatActivity() {
         while (input != null) {
             try {
                 // Si legge il messaggio in entrata;
-                val messageReceived = input.readUTF() ?: continue
+                val messageReceived = input!!.readUTF() ?: continue
                 System.out.printf("Messaggio ricevuto: %s.\n", messageReceived)
                 val message =
                     Utility.jsonStringToObject(messageReceived, Message::class.java) as Message
                 runOnUiThread {
                     val finalMessage =
                         String.format("%s: %s", message.getSender(), message.getContent())
-                    textViewMessages.append(finalMessage)
+                    textViewMessages?.append(finalMessage)
 
                     // Scrolla la chat all'ultima riga ogni volta che si riceve un messaggio;
-                    chatSV.fullScroll(View.FOCUS_DOWN)
-                    editTextMessage.setText(String())
+                    chatSV?.fullScroll(View.FOCUS_DOWN)
+                    editTextMessage?.setText(String())
                 }
             } catch (e: IOException) {
                 disconnect()
@@ -208,9 +220,9 @@ class Client : AppCompatActivity() {
         try {
             /*Si chiudono i socket e gli oggetti di input e output (Dopo aver effettuato
             un check per assicurarsi che non siano null per evitare la NullPointerException;*/
-            if (socket != null) socket.close()
-            if (output != null) output.close()
-            if (input != null) input.close()
+            socket?.close()
+            output?.close()
+            input?.close()
             runOnUiThread {
                 Toast.makeText(
                     this,
@@ -233,8 +245,8 @@ class Client : AppCompatActivity() {
     private fun sendMessage(content: String?) {
         val message = Message(LoginUtility.getUsername(), content)
         val jsonString = Utility.objectToJsonString(message)
-        output.writeUTF(jsonString)
-        output.flush()
+        output?.writeUTF(jsonString)
+        output?.flush()
         System.out.printf("%s inviato con successo.\n", jsonString)
     }
 
@@ -259,7 +271,7 @@ class Client : AppCompatActivity() {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
-        val override = Configuration(newBase.getResources().configuration)
+        val override = Configuration(newBase?.getResources()?.configuration)
         override.fontScale = 1.0f
         applyOverrideConfiguration(override)
     }
